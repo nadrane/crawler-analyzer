@@ -1,0 +1,2 @@
+
+require('./public/bundle.js')
