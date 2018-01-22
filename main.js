@@ -13,6 +13,11 @@ const BrowserWindow = electron.BrowserWindow;
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
+require("electron-reload")(__dirname, {
+  // Note that the path to electron may vary according to the main file
+  electron: require(`${__dirname}/node_modules/electron`)
+});
+
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({ width: 800, height: 600 });
@@ -77,7 +82,12 @@ function getAndReadLogFiles() {
 ipcMain.on("load-file", event => {
   getAndReadLogFiles().then(logs => {
     logs.forEach(log => {
-      const jsonLog = JSON.parse(log.data.toString());
+      const jsonLog = log.data
+        .toString()
+        .split("\n")
+        .filter(line => line)
+        .map(line => JSON.parse(line));
+
       const fileName = path.parse(log.path).name;
       event.sender.send("file-loaded", { fileName, jsonLog });
     });

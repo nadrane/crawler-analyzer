@@ -1,5 +1,6 @@
 import React from "react";
 import FileUploader from "./file-uploader";
+import Graph from "./graph";
 
 export default class App extends React.Component {
   constructor() {
@@ -17,7 +18,19 @@ export default class App extends React.Component {
     });
   }
 
+  logLoaded() {
+    return Object.keys(this.state).length > 0;
+  }
+
   render() {
-    return <FileUploader addLog={this.addLog} />;
+    const logData = this.state;
+    return (
+      <div>
+        {this.logLoaded() ? (
+          <Graph logs={this.state} yAxis={[{ event: "request sent", codeModule: "requester" }]} />
+        ) : null}
+        <FileUploader addLog={this.addLog} />
+      </div>
+    );
   }
 }

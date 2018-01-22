@@ -29,7 +29,7 @@ export default class FileUploader extends React.Component {
   render() {
     return (
       <div>
-        <h1>Enter files to analyze</h1>,
+        <h1>Enter files to analyze</h1>
         <button onClick={this.handleFileLoad}>Load Log File</button>
       </div>
     );
