@@ -49,7 +49,7 @@ const groupByTime = data => Object.values(_.groupBy(data, line => line.time));
 
 function mapAggregator(name) {
   return {
-    time: aggregateByCount,
+    count: aggregateByCount,
     average: aggregateByAverage,
     median: aggregateByMedian
   }[name];
