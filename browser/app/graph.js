@@ -6,10 +6,10 @@ import Highcharts from "highcharts";
 import ReactHighcharts from "react-highcharts";
 import _ from "lodash";
 
-export default function Graph({ logs, seriesConstraints }) {
+export default function Graph({ logs, seriesConstraints, timeInterval }) {
   {
     const timeNormalizedLogs = _.mapValues(logs, logData => {
-      return timeToNearestMinute(logData);
+      return timeToNearestInterval(logData, timeInterval);
     });
 
     const config = {
@@ -18,8 +18,10 @@ export default function Graph({ logs, seriesConstraints }) {
       },
       plotOptions: {
         series: {
-          pointStart: Date.now(), //FIX ME
-          pointInterval: 1000 * 60 // one minute
+          //FIX - still should start from first interval of earliest log.
+          // will be useful when only looking at a single logs data
+          pointStart: Date.now(), //not all logs start at same time, so this is sort of moot
+          pointInterval: timeInterval
         }
       },
       series: seriesConstraints.map(constraints => {
@@ -45,6 +47,7 @@ function calculateSeries(logs, constraints) {
   };
 }
 
+// FIX - account for case where there are gaps in the interval
 const groupByTime = data => Object.values(_.groupBy(data, line => line.time));
 
 function mapAggregator(name) {
@@ -55,11 +58,10 @@ function mapAggregator(name) {
   }[name];
 }
 
-const timeToNearestMinute = data => {
+const timeToNearestInterval = (data, timeInterval) => {
   return data.map(line => {
     const date = new Date(line.time);
-    const oneMinute = 60 * 1000;
-    line.time = Math.round(date.getTime() / oneMinute) * oneMinute;
+    line.time = Math.round(date.getTime() / timeInterval) * timeInterval;
     return line;
   });
 };
