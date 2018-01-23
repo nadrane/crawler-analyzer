@@ -12,7 +12,8 @@ export default function Graph({ logs, yAxis }) {
     const name = logNames[0];
     const data = logs[name];
     const yAxisLineOne = yAxis[0];
-    const massagedData = timeToNearestMinute(applyYAxisConstraints(data, yAxisLineOne));
+    const timeNormalizedData = timeToNearestMinute(data);
+    const series = calculateSeries(timeNormalizedData, yAxisLineOne);
 
     const config = {
       xAxis: {
@@ -20,16 +21,25 @@ export default function Graph({ logs, yAxis }) {
       },
       plotOptions: {
         series: {
-          pointStart: getMinTime(massagedData),
+          pointStart: Date.now(), //FIX ME
           pointInterval: 1000 * 60 // one minute
         }
       },
 
-      series: [{ data: aggregateYValuesByTime(massagedData, yAxisLineOne) }]
+      series: [series]
     };
 
     return <ReactHighcharts config={config} />;
   }
+}
+
+function calculateSeries(data, constraints) {
+  const filteredData = applyYAxisConstraints(data, constraints);
+  const aggregatedData = aggregateYValuesByTime(filteredData, constraints);
+  return {
+    data: aggregatedData
+    // name: constraints.name
+  };
 }
 
 const timeToNearestMinute = data => {
