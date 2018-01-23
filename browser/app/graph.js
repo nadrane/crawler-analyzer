@@ -74,7 +74,7 @@ const aggregateByCount = data => data.map(group => group.length);
 
 const aggregateByAverage = data => data.map(average);
 
-const average = group => _sum(group.map(event => event.data)) / group.length;
+const average = group => _.sum(group.map(event => event.data)) / group.length;
 
 const aggregateByMedian = group => group.map(median);
 
