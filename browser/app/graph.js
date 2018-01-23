@@ -8,8 +8,9 @@ import _ from "lodash";
 
 export default function Graph({ logs, seriesConstraints }) {
   {
-    const data = Object.values(logs)[0];
-    const timeNormalizedData = timeToNearestMinute(data);
+    const timeNormalizedLogs = _.mapValues(logs, logData => {
+      return timeToNearestMinute(logData);
+    });
 
     const config = {
       xAxis: {
@@ -22,15 +23,21 @@ export default function Graph({ logs, seriesConstraints }) {
         }
       },
       series: seriesConstraints.map(constraints => {
-        return calculateSeries(timeNormalizedData, constraints);
+        return calculateSeries(timeNormalizedLogs, constraints);
       })
     };
 
-    return <ReactHighcharts config={config} />;
+    return dataToGraphExists(logs, seriesConstraints) ? <ReactHighcharts config={config} /> : null;
   }
 }
 
-function calculateSeries(data, constraints) {
+function dataToGraphExists(logs, seriesConstraints) {
+  return Object.keys(logs).length > 0 && seriesConstraints.length > 0;
+}
+
+function calculateSeries(logs, constraints) {
+  if (!logs.hasOwnProperty(constraints.fileName)) return {};
+  const data = logs[constraints.fileName];
   const filteredAndGroupedData = groupByTime(applyYAxisConstraints(data, constraints));
   return {
     data: mapAggregator(constraints.aggregator)(filteredAndGroupedData),

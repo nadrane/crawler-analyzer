@@ -5,7 +5,32 @@ import Graph from "./graph";
 export default class App extends React.Component {
   constructor() {
     super();
-    this.state = {};
+    this.state = {
+      logs: {},
+      seriesConstraints: [
+        {
+          name: "GETs per minute",
+          event: "request sent",
+          codeModule: "requester",
+          aggregator: "time",
+          fileName: "dev-concurrency-20"
+        },
+        {
+          name: "robots per minute",
+          event: "request sent",
+          codeModule: "robots",
+          aggregator: "time",
+          fileName: "dev-concurrency-20"
+        },
+        {
+          name: "cache hits",
+          event: "cache hit",
+          codeModule: "robots",
+          aggregator: "time",
+          fileName: "dev-concurrency-20"
+        }
+      ]
+    };
     this.addLog = this.addLog.bind(this);
   }
 
@@ -13,7 +38,10 @@ export default class App extends React.Component {
     this.setState(oldState => {
       return {
         ...oldState,
-        [fileName]: jsonLog
+        logs: {
+          ...oldState.logs,
+          [fileName]: jsonLog
+        }
       };
     });
   }
@@ -23,11 +51,11 @@ export default class App extends React.Component {
   }
 
   render() {
-    const logData = this.state;
+    const { logs, seriesConstraints } = this.state;
     return (
       <div>
-        {this.logLoaded() ? (
-          <Graph logs={this.state} yAxis={[{ event: "request sent", codeModule: "requester" }]} />
+        {seriesConstraints.length > 0 ? (
+          <Graph logs={logs} seriesConstraints={seriesConstraints} />
         ) : null}
         <FileUploader addLog={this.addLog} />
       </div>
