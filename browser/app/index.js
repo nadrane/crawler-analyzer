@@ -1,11 +1,13 @@
 import React from "react";
 import FileUploader from "./file-uploader";
 import Graph from "./graph";
+import LogPicker from "./log-picker";
 
 export default class App extends React.Component {
   constructor() {
     super();
     this.state = {
+      selectedLog: "",
       logs: {},
       seriesConstraints: [
         {
@@ -31,13 +33,17 @@ export default class App extends React.Component {
         }
       ]
     };
+    this.selectLog = this.selectLog.bind(this);
     this.addLog = this.addLog.bind(this);
+  }
+
+  selectLog(name) {
+    this.setState({ selectedLog: name });
   }
 
   addLog(fileName, jsonLog) {
     this.setState(oldState => {
       return {
-        ...oldState,
         logs: {
           ...oldState.logs,
           [fileName]: jsonLog
@@ -54,6 +60,7 @@ export default class App extends React.Component {
     const { logs, seriesConstraints } = this.state;
     return (
       <div>
+        <LogPicker selectLog={this.selectLog} logNames={Object.keys(this.state.logs)} />
         {seriesConstraints.length > 0 ? (
           <Graph logs={logs} seriesConstraints={seriesConstraints} />
         ) : null}
