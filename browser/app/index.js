@@ -2,6 +2,7 @@ import React from "react";
 import FileUploader from "./file-uploader";
 import Graph from "./graph";
 import LogPicker from "./log-picker";
+import SeriesComposer from "./series-composer";
 
 export default class App extends React.Component {
   constructor() {
@@ -9,32 +10,11 @@ export default class App extends React.Component {
     this.state = {
       selectedLog: "",
       logs: {},
-      seriesConstraints: [
-        {
-          name: "GETs per minute",
-          event: "request sent",
-          codeModule: "requester",
-          aggregator: "time",
-          fileName: "dev-concurrency-20"
-        },
-        {
-          name: "robots per minute",
-          event: "request sent",
-          codeModule: "robots",
-          aggregator: "time",
-          fileName: "dev-concurrency-20"
-        },
-        {
-          name: "cache hits",
-          event: "cache hit",
-          codeModule: "robots",
-          aggregator: "time",
-          fileName: "dev-concurrency-20"
-        }
-      ]
+      seriesConstraints: []
     };
     this.selectLog = this.selectLog.bind(this);
     this.addLog = this.addLog.bind(this);
+    this.saveSeries = this.saveSeries.bind(this);
   }
 
   selectLog(name) {
@@ -52,6 +32,18 @@ export default class App extends React.Component {
     });
   }
 
+  saveSeries(codeModule, event, aggregator, name) {
+    this.setState(oldState => ({
+      seriesConstraints: oldState.seriesConstraints.concat({
+        codeModule,
+        event,
+        aggregator,
+        name,
+        fileName: this.state.selectedLog
+      })
+    }));
+  }
+
   logLoaded() {
     return Object.keys(this.state).length > 0;
   }
@@ -60,7 +52,9 @@ export default class App extends React.Component {
     const { logs, seriesConstraints } = this.state;
     return (
       <div>
+        <SeriesComposer logData={this.state.logs[this.state.selectedLog]} saveSeries={this.saveSeries} />
         <LogPicker selectLog={this.selectLog} logNames={Object.keys(this.state.logs)} />
+        {this.selectedLog ? <SeriesComposer /> : null}
         {seriesConstraints.length > 0 ? (
           <Graph logs={logs} seriesConstraints={seriesConstraints} />
         ) : null}
