@@ -31,15 +31,20 @@ export default function Graph({ logs, seriesConstraints }) {
 }
 
 function calculateSeries(data, constraints) {
+  const filteredAndGroupedData = groupByTime(applyYAxisConstraints(data, constraints));
   return {
-    data: mapAggregator(constraints.aggregator)(applyYAxisConstraints(data, constraints)),
+    data: mapAggregator(constraints.aggregator)(filteredAndGroupedData),
     name: constraints.name
   };
 }
 
+const groupByTime = data => Object.values(_.groupBy(data, line => line.time));
+
 function mapAggregator(name) {
   return {
-    time: aggregateYValuesByTime
+    time: aggregateByCount,
+    average: aggregateByAverage,
+    median: aggregateByMedian
   }[name];
 }
 
@@ -58,20 +63,15 @@ const getXValues = data => _.uniqBy(data.map(line => new Date(line.time)), date 
 const applyYAxisConstraints = (data, constraints) =>
   data.filter(line => constraints.event === line.event && constraints.codeModule === line.codeModule);
 
-function aggregateYValuesByTime(data) {
-  const minX = Math.min(...getXValues(data));
-  return (
-    data
-      .reduce((accum, line) => {
-        if (accum[line.time - minX]) {
-          accum[line.time - minX] += 1;
-        } else {
-          accum[line.time - minX] = 1;
-        }
-        return accum;
-      }, [])
-      // There are going to be a ton of holes because Date.getTime is measured using milliseconds,
-      // but we are indexing the array based on minute increments
-      .filter(values => values)
-  );
-}
+const aggregateByCount = data => data.map(group => group.length);
+
+const aggregateByAverage = data => data.map(average);
+
+const average = group => _sum(group.map(event => event.data)) / group.length;
+
+const aggregateByMedian = group => group.map(median);
+
+const median = group =>
+  group.length % 2 === 1
+    ? group[group.length / 2].data
+    : (group[group.length / 2].data + group[group.length / 2 + 1].data) / 2;
