@@ -6,14 +6,10 @@ import Highcharts from "highcharts";
 import ReactHighcharts from "react-highcharts";
 import _ from "lodash";
 
-export default function Graph({ logs, yAxis }) {
+export default function Graph({ logs, seriesConstraints }) {
   {
-    const logNames = Object.keys(logs);
-    const name = logNames[0];
-    const data = logs[name];
-    const yAxisLineOne = yAxis[0];
+    const data = Object.values(logs)[0];
     const timeNormalizedData = timeToNearestMinute(data);
-    const series = calculateSeries(timeNormalizedData, yAxisLineOne);
 
     const config = {
       xAxis: {
@@ -25,8 +21,9 @@ export default function Graph({ logs, yAxis }) {
           pointInterval: 1000 * 60 // one minute
         }
       },
-
-      series: [series]
+      series: seriesConstraints.map(constraints => {
+        return calculateSeries(timeNormalizedData, constraints);
+      })
     };
 
     return <ReactHighcharts config={config} />;
