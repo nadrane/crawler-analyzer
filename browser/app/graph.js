@@ -31,12 +31,16 @@ export default function Graph({ logs, seriesConstraints }) {
 }
 
 function calculateSeries(data, constraints) {
-  const filteredData = applyYAxisConstraints(data, constraints);
-  const aggregatedData = aggregateYValuesByTime(filteredData, constraints);
   return {
-    data: aggregatedData,
+    data: mapAggregator(constraints.aggregator)(applyYAxisConstraints(data, constraints)),
     name: constraints.name
   };
+}
+
+function mapAggregator(name) {
+  return {
+    time: aggregateYValuesByTime
+  }[name];
 }
 
 const timeToNearestMinute = data => {
@@ -54,13 +58,11 @@ const getXValues = data => _.uniqBy(data.map(line => new Date(line.time)), date 
 const applyYAxisConstraints = (data, constraints) =>
   data.filter(line => constraints.event === line.event && constraints.codeModule === line.codeModule);
 
-function aggregateYValuesByTime(data, yAxisConstraints) {
+function aggregateYValuesByTime(data) {
   const minX = Math.min(...getXValues(data));
   return (
     data
       .reduce((accum, line) => {
-        if (line.event !== yAxisConstraints.event && line.codeModule !== yAxisConstraints.codeModule)
-          return accum;
         if (accum[line.time - minX]) {
           accum[line.time - minX] += 1;
         } else {
