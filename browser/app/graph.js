@@ -37,8 +37,8 @@ function calculateSeries(data, constraints) {
   const filteredData = applyYAxisConstraints(data, constraints);
   const aggregatedData = aggregateYValuesByTime(filteredData, constraints);
   return {
-    data: aggregatedData
-    // name: constraints.name
+    data: aggregatedData,
+    name: constraints.name
   };
 }
 
