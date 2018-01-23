@@ -81,6 +81,7 @@ function getAndReadLogFiles() {
 
 ipcMain.on("load-file", event => {
   getAndReadLogFiles().then(logs => {
+    if (logs.length === 0) return;
     logs.forEach(log => {
       const jsonLog = log.data
         .toString()

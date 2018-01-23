@@ -11,16 +11,21 @@ export default function Graph({ logs, yAxis }) {
     const logNames = Object.keys(logs);
     const name = logNames[0];
     const data = logs[name];
-
-    const massagedData = timeToNearestMinute(data);
-
     const yAxisLineOne = yAxis[0];
+    const massagedData = timeToNearestMinute(applyYAxisConstraints(data, yAxisLineOne));
 
     const config = {
-      xAxis: { categories: getXValues(massagedData) },
-      series: [
-        { data: aggregateYValuesByTime(massagedData, applyYAxisConstraints(massagedData, yAxisLineOne)) }
-      ]
+      xAxis: {
+        type: "datetime"
+      },
+      plotOptions: {
+        series: {
+          pointStart: getMinTime(massagedData),
+          pointInterval: 1000 * 60 // one minute
+        }
+      },
+
+      series: [{ data: aggregateYValuesByTime(massagedData, yAxisLineOne) }]
     };
 
     return <ReactHighcharts config={config} />;
@@ -36,6 +41,7 @@ const timeToNearestMinute = data => {
   });
 };
 
+const getMinTime = data => Math.min(...getXValues(data));
 const getXValues = data => _.uniqBy(data.map(line => new Date(line.time)), date => date.getTime());
 
 const applyYAxisConstraints = (data, constraints) =>
@@ -43,14 +49,20 @@ const applyYAxisConstraints = (data, constraints) =>
 
 function aggregateYValuesByTime(data, yAxisConstraints) {
   const minX = Math.min(...getXValues(data));
-  return data.reduce((line, accum) => {
-    if (line.event !== yAxisConstraints.event && line.codeModule !== yAxisConstraints.codeModule)
-      return accum;
-    if (accum[line.time - minX]) {
-      accum[line.time - minX] += 1;
-    } else {
-      accum[line.time - minX] = 1;
-    }
-    return accum;
-  }, 0);
+  return (
+    data
+      .reduce((accum, line) => {
+        if (line.event !== yAxisConstraints.event && line.codeModule !== yAxisConstraints.codeModule)
+          return accum;
+        if (accum[line.time - minX]) {
+          accum[line.time - minX] += 1;
+        } else {
+          accum[line.time - minX] = 1;
+        }
+        return accum;
+      }, [])
+      // There are going to be a ton of holes because Date.getTime is measured using milliseconds,
+      // but we are indexing the array based on minute increments
+      .filter(values => values)
+  );
 }
