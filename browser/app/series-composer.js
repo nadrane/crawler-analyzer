@@ -40,11 +40,13 @@ module.exports = class SeriesComposer extends React.Component {
   }
 
   getUniqueEvents() {
-    return _.uniq(this.props.logData.map(line => line.event)).filter(event => event);
+    const logData = this.props.logData || [];
+    return _.uniq(logData.map(line => line.event)).filter(event => event);
   }
 
   getUniqueCodeModules() {
-    return _.uniq(this.props.logData.map(line => line.codeModule)).filter(codeModule => codeModule);
+    const logData = this.props.logData || [];
+    return _.uniq(logData.map(line => line.codeModule)).filter(codeModule => codeModule);
   }
 
   renderSelect(getOptions, field) {
@@ -63,7 +65,7 @@ module.exports = class SeriesComposer extends React.Component {
   }
 
   render() {
-    return this.props.logData ? (
+    return (
       <div>
         <h2>Compose a series to graph</h2>
         <input onChange={e => this.handleChange(e, "name")} value={this.state.name} type="text" />
@@ -75,6 +77,6 @@ module.exports = class SeriesComposer extends React.Component {
           Save Series
         </button>
       </div>
-    ) : null;
+    );
   }
 };

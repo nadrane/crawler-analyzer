@@ -69,7 +69,6 @@ export default class App extends React.Component {
         />
         <LogPicker selectLog={this.selectLog} logNames={Object.keys(this.state.logs)} />
         <SeriesComposer logData={this.state.logs[this.state.selectedLog]} saveSeries={this.saveSeries} />
-        {this.selectedLog ? <SeriesComposer /> : null}
         {seriesConstraints.length > 0 ? (
           <Graph logs={logs} seriesConstraints={seriesConstraints} timeInterval={timeInterval} />
         ) : null}
