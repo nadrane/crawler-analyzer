@@ -33,7 +33,7 @@ export default function Graph({ logs, seriesConstraints, timeInterval }) {
         }
       },
       series: seriesConstraints.map(constraints => {
-        return calculateSeries(timeNormalizedLogs, constraints);
+        return calculateSeries(timeNormalizedLogs, constraints, timeInterval);
       })
     };
 
@@ -45,10 +45,10 @@ function dataToGraphExists(logs, seriesConstraints) {
   return Object.keys(logs).length > 0 && seriesConstraints.length > 0;
 }
 
-function calculateSeries(logs, constraints) {
+function calculateSeries(logs, constraints, timeInterval) {
   if (!logs.hasOwnProperty(constraints.fileName)) return {};
   const data = logs[constraints.fileName];
-  const filteredAndGroupedData = groupByTime(applyConstraints(data, constraints));
+  const filteredAndGroupedData = groupByTime(applyConstraints(data, constraints), timeInterval);
   return {
     data: mapAggregator(constraints.aggregator)(filteredAndGroupedData),
     name: constraints.name
