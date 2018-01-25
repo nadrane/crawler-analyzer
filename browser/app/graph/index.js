@@ -26,9 +26,7 @@ export default function Graph({ logs, seriesConstraints, timeInterval }) {
       },
       plotOptions: {
         series: {
-          //FIX - still should start from first interval of earliest log.
-          // will be useful when only looking at a single logs data
-          pointStart: Date.now(), //not all logs start at same time, so this is sort of moot
+          pointStart: getEarliestTime(timeNormalizedLogs),
           pointInterval: timeInterval
         }
       },
@@ -39,6 +37,10 @@ export default function Graph({ logs, seriesConstraints, timeInterval }) {
 
     return dataToGraphExists(logs, seriesConstraints) ? <ReactHighcharts config={config} /> : null;
   }
+}
+
+function getEarliestTime(logs) {
+  return Math.min(..._.flatten(Object.values(logs).map(log => log.map(line => line.time))));
 }
 
 function dataToGraphExists(logs, seriesConstraints) {
