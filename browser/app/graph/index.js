@@ -20,7 +20,30 @@ export default function Graph({ logs, seriesConstraints, timeInterval }) {
       return timeToNearestInterval(logData, timeInterval);
     });
 
+    const yAxis = [
+      {
+        // Primary yAxis
+        title: {
+          text: "counts",
+          style: {
+            color: Highcharts.getOptions().colors[0]
+          }
+        }
+      },
+      {
+        // Secondary yAxis
+        title: {
+          text: "averages/medians",
+          style: {
+            color: Highcharts.getOptions().colors[1]
+          }
+        },
+        opposite: true
+      }
+    ];
+
     const config = {
+      yAxis,
       xAxis: {
         type: "datetime"
       },
@@ -53,7 +76,8 @@ function calculateSeries(logs, constraints, timeInterval) {
   const filteredAndGroupedData = groupByTime(applyConstraints(data, constraints), timeInterval);
   return {
     data: mapAggregator(constraints.aggregator)(filteredAndGroupedData),
-    name: constraints.name
+    name: constraints.name,
+    yAxis: constraints.yAxis
   };
 }
 

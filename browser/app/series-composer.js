@@ -5,7 +5,8 @@ const inititalState = {
   codeModule: "",
   event: "",
   aggregator: "",
-  name: ""
+  name: "",
+  yAxis: "0"
 };
 
 module.exports = class SeriesComposer extends React.Component {
@@ -23,13 +24,14 @@ module.exports = class SeriesComposer extends React.Component {
   }
 
   seriesValid() {
-    const { codeModule, event, aggregator, name } = this.state;
+    const { codeModule, event, aggregator, name, yAxis } = this.state;
+    if (yAxis !== "0" && yAxis !== "1") return false;
     return codeModule && event && aggregator && name;
   }
 
   saveSeries() {
-    const { codeModule, event, aggregator, name } = this.state;
-    this.props.saveSeries(codeModule, event, aggregator, name);
+    const { codeModule, event, aggregator, name, yAxis } = this.state;
+    this.props.saveSeries(codeModule, event, aggregator, name, parseInt(yAxis));
     this.setState(inititalState);
   }
 
@@ -68,6 +70,7 @@ module.exports = class SeriesComposer extends React.Component {
         {this.renderSelect(this.getUniqueCodeModules.bind(this), "codeModule")}
         {this.renderSelect(this.getUniqueEvents.bind(this), "event")}
         {this.renderSelect(this.getAggregators.bind(this), "aggregator")}
+        <input onChange={e => this.handleChange(e, "yAxis")} value={this.state.yAxis} type="text" />
         <button disabled={!this.seriesValid()} onClick={this.saveSeries}>
           Save Series
         </button>

@@ -35,14 +35,15 @@ export default class App extends React.Component {
     });
   }
 
-  saveSeries(codeModule, event, aggregator, name) {
+  saveSeries(codeModule, event, aggregator, name, yAxis) {
     this.setState(oldState => ({
       seriesConstraints: oldState.seriesConstraints.concat({
         codeModule,
         event,
         aggregator,
         name,
-        fileName: this.state.selectedLog
+        fileName: this.state.selectedLog,
+        yAxis
       })
     }));
   }
