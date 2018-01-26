@@ -16,8 +16,8 @@ import {
 
 export default function Graph({ logs, seriesConstraints, timeInterval }) {
   {
-    const timeNormalizedLogs = _.mapValues(logs, logData => {
-      return timeToNearestInterval(logData, timeInterval);
+    const timeNormalizedLogs = logs.map(log => {
+      return timeToNearestInterval(log, timeInterval);
     });
 
     const yAxis = [
@@ -53,9 +53,13 @@ export default function Graph({ logs, seriesConstraints, timeInterval }) {
           pointInterval: timeInterval
         }
       },
-      series: seriesConstraints.map(constraints => {
-        return calculateSeries(timeNormalizedLogs, constraints, timeInterval);
-      })
+      series: _.flatten(
+        timeNormalizedLogs.map(log =>
+          seriesConstraints.map(constraints => {
+            return calculateSeries(log, constraints, timeInterval);
+          })
+        )
+      )
     };
 
     return dataToGraphExists(logs, seriesConstraints) ? <ReactHighcharts config={config} /> : null;
@@ -70,9 +74,7 @@ function dataToGraphExists(logs, seriesConstraints) {
   return Object.keys(logs).length > 0 && seriesConstraints.length > 0;
 }
 
-function calculateSeries(logs, constraints, timeInterval) {
-  if (!logs.hasOwnProperty(constraints.fileName)) return {};
-  const data = logs[constraints.fileName];
+function calculateSeries(data, constraints, timeInterval) {
   const filteredAndGroupedData = groupByTime(applyConstraints(data, constraints), timeInterval);
   return {
     data: mapAggregator(constraints.aggregator)(filteredAndGroupedData),

@@ -52,7 +52,6 @@ export default class App extends React.Component {
         event,
         aggregator,
         name,
-        fileName: this.state.selectedLog,
         yAxis
       })
     }));
@@ -68,6 +67,15 @@ export default class App extends React.Component {
     });
   }
 
+  getActiveLogs() {
+    const { logs } = this.state;
+    return _.pickBy(logs, log => log.active);
+  }
+
+  getActiveLogData() {
+    return Object.values(this.getActiveLogs()).map(log => log.value);
+  }
+
   render() {
     const { logs, seriesConstraints, timeInterval } = this.state;
     return (
@@ -78,9 +86,13 @@ export default class App extends React.Component {
           saveTimeInterval={this.saveTimeInterval}
         />
         <DisplayLogs selectLog={this.selectLog} logs={this.state.logs} toggleLog={this.toggleLog} />
-        <SeriesComposer logData={this.state.logs[this.state.selectedLog]} saveSeries={this.saveSeries} />
+        <SeriesComposer logData={_.concat(...this.getActiveLogData())} saveSeries={this.saveSeries} />
         {seriesConstraints.length > 0 ? (
-          <Graph logs={logs} seriesConstraints={seriesConstraints} timeInterval={timeInterval} />
+          <Graph
+            logs={this.getActiveLogData()}
+            seriesConstraints={seriesConstraints}
+            timeInterval={timeInterval}
+          />
         ) : null}
       </div>
     );
