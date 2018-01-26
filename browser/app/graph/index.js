@@ -67,7 +67,7 @@ export default function Graph({ logs, seriesConstraints, timeInterval }) {
 }
 
 function getEarliestTime(logs) {
-  return Math.min(..._.flatten(Object.values(logs).map(log => log.map(line => line.time))));
+  return _.min(_.flatten(logs.map(log => log.map(line => line.time))));
 }
 
 function dataToGraphExists(logs, seriesConstraints) {
