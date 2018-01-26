@@ -1,5 +1,6 @@
 import React from "react";
 import _ from "lodash";
+import SelectCodeModule from "./select-code-module";
 
 const inititalState = {
   codeModule: "",
@@ -15,6 +16,7 @@ module.exports = class SeriesComposer extends React.Component {
     this.state = inititalState;
     this.seriesValid = this.seriesValid.bind(this);
     this.saveSeries = this.saveSeries.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   handleChange(e, field) {
@@ -57,10 +59,11 @@ module.exports = class SeriesComposer extends React.Component {
   }
 
   renderSelect(getOptions, field) {
+    const { logData } = this.props;
     return (
       <select value={this.state[field]} onChange={e => this.handleChange(e, field)}>
         <option key={`select a ${field}`} value={`select a ${field}`}>{`select a ${field}`}</option>
-        {getOptions().map(option => {
+        {getOptions(logData).map(option => {
           return (
             <option key={option} value={option}>
               {option}
@@ -72,11 +75,13 @@ module.exports = class SeriesComposer extends React.Component {
   }
 
   render() {
+    const { codeModule } = this.state;
+    const { logData } = this.props;
     return (
       <div>
         <h2>Compose a series to graph</h2>
         <input onChange={e => this.handleChange(e, "name")} value={this.state.name} type="text" />
-        {this.renderSelect(this.getUniqueCodeModules.bind(this), "codeModule")}
+        <SelectCodeModule logData={logData} codeModule={codeModule} handleChange={this.handleChange} />
         {this.renderSelect(this.getUniqueEvents.bind(this), "event")}
         {this.renderSelect(this.getAggregators.bind(this), "aggregator")}
         <input onChange={e => this.handleChange(e, "yAxis")} value={this.state.yAxis} type="text" />
