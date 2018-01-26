@@ -41,7 +41,14 @@ module.exports = class SeriesComposer extends React.Component {
 
   getUniqueEvents() {
     const logData = this.props.logData || [];
-    return _.uniq(logData.map(line => line.event)).filter(event => event);
+    const codeModule = this.state.codeModule;
+    if (!codeModule) return [];
+    return _.uniq(
+      logData
+        .filter(line => line.codeModule === codeModule)
+        .map(line => line.event)
+        .filter(event => event)
+    );
   }
 
   getUniqueCodeModules() {
@@ -50,7 +57,7 @@ module.exports = class SeriesComposer extends React.Component {
   }
 
   renderSelect(getOptions, field) {
-    return getOptions().length > 0 ? (
+    return (
       <select value={this.state[field]} onChange={e => this.handleChange(e, field)}>
         <option key={`select a ${field}`} value={`select a ${field}`}>{`select a ${field}`}</option>
         {getOptions().map(option => {
@@ -61,7 +68,7 @@ module.exports = class SeriesComposer extends React.Component {
           );
         })}
       </select>
-    ) : null;
+    );
   }
 
   render() {

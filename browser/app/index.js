@@ -1,7 +1,7 @@
 import React from "react";
 import FileUploader from "./file-uploader";
 import Graph from "./graph";
-import LogPicker from "./log-picker";
+import DisplayLogs from "./display-logs";
 import SeriesComposer from "./series-composer";
 import TimeIntervalPicker from "./time-interval-picker";
 
@@ -10,18 +10,25 @@ export default class App extends React.Component {
     super();
     this.state = {
       timeInterval: 1000 * 60,
-      selectedLog: "",
       logs: {},
       seriesConstraints: []
     };
-    this.selectLog = this.selectLog.bind(this);
+    this.toggleLog = this.toggleLog.bind(this);
     this.addLog = this.addLog.bind(this);
     this.saveSeries = this.saveSeries.bind(this);
     this.saveTimeInterval = this.saveTimeInterval.bind(this);
   }
 
-  selectLog(name) {
-    this.setState({ selectedLog: name });
+  toggleLog(name) {
+    this.setState(oldState => ({
+      logs: {
+        ...oldState.logs,
+        [name]: {
+          value: oldState.logs[name].value,
+          active: !oldState.logs[name].active
+        }
+      }
+    }));
   }
 
   addLog(fileName, jsonLog) {
@@ -29,7 +36,10 @@ export default class App extends React.Component {
       return {
         logs: {
           ...oldState.logs,
-          [fileName]: jsonLog
+          [fileName]: {
+            value: jsonLog,
+            active: true
+          }
         }
       };
     });
@@ -67,7 +77,7 @@ export default class App extends React.Component {
           timeInterval={this.state.timeInterval}
           saveTimeInterval={this.saveTimeInterval}
         />
-        <LogPicker selectLog={this.selectLog} logNames={Object.keys(this.state.logs)} />
+        <DisplayLogs selectLog={this.selectLog} logs={this.state.logs} toggleLog={this.toggleLog} />
         <SeriesComposer logData={this.state.logs[this.state.selectedLog]} saveSeries={this.saveSeries} />
         {seriesConstraints.length > 0 ? (
           <Graph logs={logs} seriesConstraints={seriesConstraints} timeInterval={timeInterval} />
