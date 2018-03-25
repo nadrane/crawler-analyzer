@@ -156,23 +156,24 @@ export default class App extends React.Component {
             toggleLog={this.toggleLog}
           />
           <SeriesComposer fileMetaData={fileMetaData} addSeries={this.addSeries} />
-          <Options timeInterval={this.state.timeInterval} saveTimeInterval={this.saveTimeInterval} />
         </div>
         <div className="row">
           {seriesExist && (
             <ActiveSeries seriesConstraints={seriesConstraints} toggleSeries={this.toggleSeries} />
           )}
         </div>
-        {/* <div className="row">
+        <div className="row">
           {seriesConstraints.length > 0 ? (
-            <Graph
-              logs={this.getActiveLogData()}
-              seriesConstraints={seriesConstraints}
-              timeInterval={timeInterval}
-            />
+            <React.Fragment>
+              <Options timeInterval={this.state.timeInterval} saveTimeInterval={this.saveTimeInterval} />
+              <Graph
+                logs={this.getActiveLogData()}
+                seriesConstraints={seriesConstraints}
+                timeInterval={timeInterval}
+              />
+            </React.Fragment>
           ) : null}
-        </div> */}
-        }
+        </div>
       </div>
     );
   }

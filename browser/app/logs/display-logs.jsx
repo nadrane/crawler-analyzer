@@ -14,9 +14,10 @@ export default function DisplayLogs({ logs, toggleLog }) {
         </thead>
         <tbody>
           {Object.values(logs).map(({ id, fileName, active }) => {
+            const dateName = new Date(parseInt(fileName));
             return (
               <tr key={id} onClick={toggleLog.bind(null, id)}>
-                <td>{fileName}</td>
+                <td>{dateName.toLocaleDateString([], { hour: "2-digit", minute: "2-digit" })}</td>
                 <td>{active.toString()}</td>
                 <td>
                   <button className="btn btn-secondary btn-sm">Toggle Log</button>
