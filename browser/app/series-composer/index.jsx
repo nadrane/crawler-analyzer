@@ -1,5 +1,6 @@
 import React from "react";
-import _ from "lodash";
+import { Set } from "immutable";
+
 import SelectCodeModule from "./select-code-module";
 import Card from "../card";
 
@@ -15,7 +16,7 @@ module.exports = class SeriesComposer extends React.Component {
     super();
     this.state = inititalState;
     this.seriesValid = this.seriesValid.bind(this);
-    this.saveSeries = this.saveSeries.bind(this);
+    this.addSeries = this.addSeries.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
@@ -31,10 +32,10 @@ module.exports = class SeriesComposer extends React.Component {
     return codeModule && event && aggregator;
   }
 
-  saveSeries() {
+  addSeries() {
     const { codeModule, event, aggregator, yAxis } = this.state;
-    const name = `${codeModule}:${event} by ${aggregator}`;
-    this.props.saveSeries(codeModule, event, aggregator, name, parseInt(yAxis));
+    const name = `${codeModule} - ${aggregator} ${event}`;
+    this.props.addSeries(codeModule, event, aggregator, name, parseInt(yAxis));
     this.setState(inititalState);
   }
 
@@ -43,20 +44,16 @@ module.exports = class SeriesComposer extends React.Component {
   }
 
   getUniqueEvents() {
-    const logData = this.props.logData || [];
+    const fileMetaData = this.props.fileMetaData;
     const codeModule = this.state.codeModule;
-    if (!codeModule) return [];
-    return _.uniq(
-      logData
-        .filter(line => line.codeModule === codeModule)
-        .map(line => line.event)
-        .filter(event => event)
-    );
-  }
 
-  getUniqueCodeModules() {
-    const logData = this.props.logData || [];
-    return _.uniq(logData.map(line => line.codeModule)).filter(codeModule => codeModule);
+    if (!codeModule) return [];
+
+    let events = new Set();
+    for (const file of fileMetaData.values()) {
+      events = events.union(file.get(codeModule));
+    }
+    return events.keySeq();
   }
 
   renderSelect(getOptions, field) {
@@ -81,12 +78,16 @@ module.exports = class SeriesComposer extends React.Component {
 
   render() {
     const { codeModule } = this.state;
-    const { logData } = this.props;
+    const { fileMetaData } = this.props;
     return (
       <Card>
         <h4>Compose a series to graph</h4>
         <div className="form-group">
-          <SelectCodeModule logData={logData} codeModule={codeModule} handleChange={this.handleChange} />
+          <SelectCodeModule
+            fileMetaData={fileMetaData}
+            codeModule={codeModule}
+            handleChange={this.handleChange}
+          />
         </div>
         <div className="form-group">{this.renderSelect(this.getUniqueEvents.bind(this), "event")}</div>
         <div className="form-group">
@@ -102,7 +103,7 @@ module.exports = class SeriesComposer extends React.Component {
             type="text"
           />
         </div>
-        <button className="btn btn-primary" disabled={!this.seriesValid()} onClick={this.saveSeries}>
+        <button className="btn btn-primary" disabled={!this.seriesValid()} onClick={this.addSeries}>
           Save Series
         </button>
       </Card>

@@ -1,11 +1,9 @@
 import React from "react";
-import _ from "lodash";
 
 export default class SelectCodeModule extends React.PureComponent {
   render() {
-    const { codeModule, handleChange } = this.props;
-    const logData = this.props.logData || [];
-    const options = _.uniq(logData.map(line => line.codeModule)).filter(codeModule => codeModule);
+    const { codeModule, handleChange, fileMetaData } = this.props;
+    const codeModuleOptions = fileMetaData.flatMap(oneFile => oneFile).keySeq();
 
     return (
       <select className="custom-select" value={codeModule} onChange={e => handleChange(e, "codeModule")}>
@@ -13,7 +11,7 @@ export default class SelectCodeModule extends React.PureComponent {
           key={`select a codeModule`}
           value={`select a codeModule`}
         >{`select a codeModule`}</option>
-        {options.map(option => {
+        {codeModuleOptions.map(option => {
           return (
             <option key={option} value={option}>
               {option}

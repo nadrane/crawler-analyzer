@@ -3,6 +3,7 @@ const url = require("url");
 const electron = require("electron");
 const { ipcMain } = electron;
 const bluebird = require("bluebird");
+const ndjson = require("ndjson");
 let fs = require("fs");
 fs = bluebird.promisifyAll(fs);
 
@@ -74,23 +75,31 @@ function showDialogueAndGetFilePaths() {
 
 function getAndReadLogFiles() {
   const filePaths = showDialogueAndGetFilePaths();
+  if (!filePaths) return Promise.resolve();
   return bluebird.map(filePaths, path => {
-    return bluebird.props({ path, data: fs.readFileAsync(path) });
+    return bluebird.props({ path, dataStream: fs.createReadStream(path) });
   });
 }
 
 ipcMain.on("load-file", event => {
   getAndReadLogFiles().then(logs => {
-    if (logs.length === 0) return;
+    if (!logs.length) return;
+    let batch = [];
     logs.forEach(log => {
-      const jsonLog = log.data
-        .toString()
-        .split("\n")
-        .filter(line => line)
-        .map(line => JSON.parse(line));
-
       const fileName = path.parse(log.path).name;
-      event.sender.send("file-loaded", { fileName, jsonLog });
+      const jsonLog = log.dataStream
+        .pipe(ndjson.parse())
+        .on("data", line => {
+          batch.push(line);
+          if (batch.length >= 1000) {
+            event.sender.send("file-line-parsed", { fileName, batch });
+            batch = [];
+          }
+        })
+        .on("end", () => {
+          event.sender.send("file-line-parsed", { fileName, batch });
+          batch = [];
+        });
     });
   });
 });

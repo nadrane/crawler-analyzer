@@ -11,19 +11,19 @@ export default class FileUploader extends React.Component {
   }
 
   componentDidMount() {
-    ipcRenderer.addListener("file-loaded", this.fileLoaded);
+    ipcRenderer.addListener("file-line-parsed", this.fileLoaded);
   }
 
   componentWillUnmount() {
-    ipcRenderer.removeListener("file-loaded", this.fileLoaded);
+    ipcRenderer.removeListener("file-line-parsed", this.fileLoaded);
   }
 
   handleFileLoad(e) {
     ipcRenderer.send("load-file");
   }
 
-  fileLoaded(event, logs) {
-    this.props.addLog(logs.fileName, logs.jsonLog);
+  fileLoaded(event, { fileName, batch: lines }) {
+    this.props.addLogLines(fileName, lines);
   }
 
   render() {

@@ -3,24 +3,31 @@ import React from "react";
 export default function DisplayLogs({ logs, toggleLog }) {
   return Object.keys(logs).length > 0 ? (
     <div>
-      <table>
-        <tbody>
+      <table className="table">
+        <thead>
           <tr>
             <th>Loaded Logs</th>
-            <th>Active</th>
-            <th>Toggle Log</th>
+            <th colSpan="2" align="right">
+              Active
+            </th>
           </tr>
-          {Object.entries(logs).map(([name, { active }]) => {
+        </thead>
+        <tbody>
+          {Object.values(logs).map(({ id, fileName, active }) => {
             return (
-              <tr key={name} onClick={toggleLog.bind(null, name)}>
-                <td>{name}</td>
+              <tr key={id} onClick={toggleLog.bind(null, id)}>
+                <td>{fileName}</td>
                 <td>{active.toString()}</td>
-                <td>{active ? "X" : "\u2713"}</td>
+                <td>
+                  <button className="btn btn-secondary btn-sm">Toggle Log</button>
+                </td>
               </tr>
             );
           })}
         </tbody>
       </table>
     </div>
-  ) : null;
+  ) : (
+    <p>No logs have been loaded</p>
+  );
 }
