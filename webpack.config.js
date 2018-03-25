@@ -14,7 +14,8 @@ const config = {
   context: __dirname,
   devtool: "source-map",
   resolve: {
-    modules: ["node_modules"]
+    modules: ["node_modules"],
+    extensions: [".", ".jsx", ".js"]
   },
   target: "electron",
   plugins: [new LiveReloadPlugin({ appendScriptTag: true })],

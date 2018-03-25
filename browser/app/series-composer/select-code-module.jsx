@@ -5,12 +5,10 @@ export default class SelectCodeModule extends React.PureComponent {
   render() {
     const { codeModule, handleChange } = this.props;
     const logData = this.props.logData || [];
-
-    console.log("rerendering");
     const options = _.uniq(logData.map(line => line.codeModule)).filter(codeModule => codeModule);
 
     return (
-      <select value={codeModule} onChange={e => handleChange(e, "codeModule")}>
+      <select className="custom-select" value={codeModule} onChange={e => handleChange(e, "codeModule")}>
         <option
           key={`select a codeModule`}
           value={`select a codeModule`}

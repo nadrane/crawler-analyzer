@@ -1,9 +1,8 @@
 import React from "react";
-import FileUploader from "./file-uploader";
 import Graph from "./graph";
-import DisplayLogs from "./display-logs";
+import Logs from "./logs";
 import SeriesComposer from "./series-composer";
-import TimeIntervalPicker from "./time-interval-picker";
+import Options from "./options/";
 
 export default class App extends React.Component {
   constructor() {
@@ -79,21 +78,24 @@ export default class App extends React.Component {
   render() {
     const { logs, seriesConstraints, timeInterval } = this.state;
     return (
-      <div>
-        <FileUploader addLog={this.addLog} />
-        <TimeIntervalPicker
-          timeInterval={this.state.timeInterval}
-          saveTimeInterval={this.saveTimeInterval}
-        />
-        <DisplayLogs selectLog={this.selectLog} logs={this.state.logs} toggleLog={this.toggleLog} />
-        <SeriesComposer logData={_.concat(...this.getActiveLogData())} saveSeries={this.saveSeries} />
-        {seriesConstraints.length > 0 ? (
-          <Graph
-            logs={this.getActiveLogData()}
-            seriesConstraints={seriesConstraints}
-            timeInterval={timeInterval}
+      <div className="container">
+        <div className="row">
+          <Logs
+            addLog={this.addLog}
+            selectLog={this.selectLog}
+            logs={this.state.logs}
+            toggleLog={this.toggleLog}
           />
-        ) : null}
+          <SeriesComposer logData={_.concat(...this.getActiveLogData())} saveSeries={this.saveSeries} />
+          {seriesConstraints.length > 0 ? (
+            <Graph
+              logs={this.getActiveLogData()}
+              seriesConstraints={seriesConstraints}
+              timeInterval={timeInterval}
+            />
+          ) : null}
+          <Options timeInterval={this.state.timeInterval} saveTimeInterval={this.saveTimeInterval} />
+        </div>
       </div>
     );
   }

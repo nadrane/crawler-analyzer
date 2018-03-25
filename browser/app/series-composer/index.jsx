@@ -1,12 +1,12 @@
 import React from "react";
 import _ from "lodash";
 import SelectCodeModule from "./select-code-module";
+import Card from "../card";
 
 const inititalState = {
   codeModule: "",
   event: "",
   aggregator: "",
-  name: "",
   yAxis: "0"
 };
 
@@ -26,13 +26,14 @@ module.exports = class SeriesComposer extends React.Component {
   }
 
   seriesValid() {
-    const { codeModule, event, aggregator, name, yAxis } = this.state;
+    const { codeModule, event, aggregator, yAxis } = this.state;
     if (yAxis !== "0" && yAxis !== "1") return false;
-    return codeModule && event && aggregator && name;
+    return codeModule && event && aggregator;
   }
 
   saveSeries() {
-    const { codeModule, event, aggregator, name, yAxis } = this.state;
+    const { codeModule, event, aggregator, yAxis } = this.state;
+    const name = `${codeModule}:${event} by ${aggregator}`;
     this.props.saveSeries(codeModule, event, aggregator, name, parseInt(yAxis));
     this.setState(inititalState);
   }
@@ -61,7 +62,11 @@ module.exports = class SeriesComposer extends React.Component {
   renderSelect(getOptions, field) {
     const { logData } = this.props;
     return (
-      <select value={this.state[field]} onChange={e => this.handleChange(e, field)}>
+      <select
+        className="custom-select form-control"
+        value={this.state[field]}
+        onChange={e => this.handleChange(e, field)}
+      >
         <option key={`select a ${field}`} value={`select a ${field}`}>{`select a ${field}`}</option>
         {getOptions(logData).map(option => {
           return (
@@ -78,17 +83,29 @@ module.exports = class SeriesComposer extends React.Component {
     const { codeModule } = this.state;
     const { logData } = this.props;
     return (
-      <div>
-        <h2>Compose a series to graph</h2>
-        <input onChange={e => this.handleChange(e, "name")} value={this.state.name} type="text" />
-        <SelectCodeModule logData={logData} codeModule={codeModule} handleChange={this.handleChange} />
-        {this.renderSelect(this.getUniqueEvents.bind(this), "event")}
-        {this.renderSelect(this.getAggregators.bind(this), "aggregator")}
-        <input onChange={e => this.handleChange(e, "yAxis")} value={this.state.yAxis} type="text" />
-        <button disabled={!this.seriesValid()} onClick={this.saveSeries}>
+      <Card>
+        <h4>Compose a series to graph</h4>
+        <div className="form-group">
+          <SelectCodeModule logData={logData} codeModule={codeModule} handleChange={this.handleChange} />
+        </div>
+        <div className="form-group">{this.renderSelect(this.getUniqueEvents.bind(this), "event")}</div>
+        <div className="form-group">
+          {this.renderSelect(this.getAggregators.bind(this), "aggregator")}
+        </div>
+        <div className="form-group">
+          <label htmlFor="yAxis">Y-Axis</label>
+          <input
+            id="yAxis"
+            className="form-control"
+            onChange={e => this.handleChange(e, "yAxis")}
+            value={this.state.yAxis}
+            type="text"
+          />
+        </div>
+        <button className="btn btn-primary" disabled={!this.seriesValid()} onClick={this.saveSeries}>
           Save Series
         </button>
-      </div>
+      </Card>
     );
   }
 };

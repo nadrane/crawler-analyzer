@@ -27,14 +27,21 @@ module.exports = class TimeIntervalPicker extends React.Component {
     const { timeInterval } = this.props;
     const { localTimeInteval } = this.state;
     return (
-      <div>
-        <p>Pick a time interval (ms)</p>
-        <input
-          value={localTimeInteval !== 0 ? localTimeInteval : timeInterval}
-          onChange={this.handleClick}
-        />
-        <button onClick={this.saveTimeInterval}>Save Time Interval</button>
-      </div>
+      <React.Fragment>
+        <div className="form-group">
+          <label htmlFor="timeInterval">Pick a time interval (ms)</label>
+          <input
+            id="timeInterval"
+            className="form-control"
+            value={localTimeInteval !== 0 ? localTimeInteval : timeInterval}
+            onChange={this.handleClick}
+          />
+        </div>
+
+        <button className="btn btn-primary" onClick={this.saveTimeInterval}>
+          Save Time Interval
+        </button>
+      </React.Fragment>
     );
   }
 };
