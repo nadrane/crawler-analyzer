@@ -111,10 +111,10 @@ export default class App extends React.Component {
 
   toggleSeries(id) {
     this.setState(oldState => {
-      const series = oldState.series[id];
+      const series = oldState.seriesConstraints[id];
       return {
-        series: {
-          ...oldState.series,
+        seriesConstraints: {
+          ...oldState.seriesConstraints,
           [id]: {
             ...series,
             active: !series.active
