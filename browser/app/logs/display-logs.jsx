@@ -14,10 +14,16 @@ export default function DisplayLogs({ logs, toggleLog }) {
         </thead>
         <tbody>
           {Object.values(logs).map(({ id, fileName, active }) => {
-            const dateName = new Date(parseInt(fileName));
+            let formattedName;
+            if (isNaN(parseInt(fileName))) {
+              formattedName = fileName;
+            } else {
+              const dateName = new Date(parseInt(fileName));
+              formattedName = dateName.toLocaleDateString([], { hour: "2-digit", minute: "2-digit" });
+            }
             return (
               <tr key={id} onClick={toggleLog.bind(null, id)}>
-                <td>{dateName.toLocaleDateString([], { hour: "2-digit", minute: "2-digit" })}</td>
+                <td>{formattedName}</td>
                 <td>{active.toString()}</td>
                 <td>
                   <button className="btn btn-secondary btn-sm">Toggle Log</button>

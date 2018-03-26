@@ -6,16 +6,18 @@
   "scripts": {
     "start": "electron .",
     "build": "webpack -w",
-    "test-unit": "cross-env NODE_ENV=test ./node_modules/mocha/bin/mocha --require babel-register tests/unit-tests/**/*test.js -w --reporter spec",
-    "test-integration": "cross-env NODE_ENV=test ./node_modules/mocha/bin/mocha --require babel-register tests/integration-tests/**/*test.js -w --reporter spec",
-    "test": "cross-env NODE_ENV=test ./node_modules/mocha/bin/mocha --require babel-register tests/**/*test.js -w --reporter spec"
+    "test-unit":
+      "cross-env NODE_ENV=test ./node_modules/mocha/bin/mocha --require babel-register tests/unit-tests/**/*test.js -w --reporter spec",
+    "test-integration":
+      "cross-env NODE_ENV=test ./node_modules/mocha/bin/mocha --require babel-register tests/integration-tests/**/*test.js -w --reporter spec",
+    "test":
+      "cross-env NODE_ENV=test ./node_modules/mocha/bin/mocha --require babel-register tests/**/*test.js -w --reporter spec"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "bluebird": "^3.5.1",
     "electron": "1.8.4",
-    "electron-react-devtools": "^0.5.3",
     "global": "^4.3.2",
     "highcharts": "^6.0.4",
     "immutable": "^3.8.2",
@@ -35,6 +37,7 @@
     "babel-preset-stage-2": "^6.24.1",
     "chai": "^4.1.2",
     "cross-env": "^5.1.3",
+    "electron-react-devtools": "^0.5.3",
     "electron-reload": "^1.2.2",
     "mocha": "^5.0.0",
     "webpack": "^3.10.0",

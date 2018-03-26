@@ -3,7 +3,7 @@ import FileUploader from "./file-uploader";
 import DisplayLogs from "./display-logs";
 import Card from "../card";
 
-module.exports = function Logs({ addLogLines, logs, selectLog, toggleLog }) {
+export default function Logs({ addLogLines, logs, selectLog, toggleLog }) {
   return (
     <Card>
       <h4>Enter logs to analyze</h4>
@@ -11,4 +11,4 @@ module.exports = function Logs({ addLogLines, logs, selectLog, toggleLog }) {
       <FileUploader addLogLines={addLogLines} />
     </Card>
   );
-};
+}

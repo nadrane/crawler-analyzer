@@ -1,6 +1,6 @@
 import React from "react";
 
-module.exports = class TimeIntervalPicker extends React.Component {
+export default class TimeIntervalPicker extends React.Component {
   constructor() {
     super();
     this.handleClick = this.handleClick.bind(this);
@@ -44,4 +44,4 @@ module.exports = class TimeIntervalPicker extends React.Component {
       </React.Fragment>
     );
   }
-};
+}

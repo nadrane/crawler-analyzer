@@ -4,7 +4,6 @@ import Graph from "./graph";
 import Logs from "./logs";
 import SeriesComposer from "./series-composer";
 import Options from "./options/";
-import ActiveSeries from "./active-series";
 
 let logId = 0;
 let seriesId = 0;
@@ -155,12 +154,12 @@ export default class App extends React.Component {
             logs={this.state.logs}
             toggleLog={this.toggleLog}
           />
-          <SeriesComposer fileMetaData={fileMetaData} addSeries={this.addSeries} />
-        </div>
-        <div className="row">
-          {seriesExist && (
-            <ActiveSeries seriesConstraints={seriesConstraints} toggleSeries={this.toggleSeries} />
-          )}
+          <SeriesComposer
+            fileMetaData={fileMetaData}
+            series={seriesConstraints}
+            addSeries={this.addSeries}
+            toggleSeries={this.toggleSeries}
+          />
         </div>
         <div className="row">
           {seriesConstraints.length > 0 ? (
