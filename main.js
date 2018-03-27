@@ -85,11 +85,17 @@ ipcMain.on("load-file", event => {
   getAndReadLogFiles().then(logs => {
     if (!logs.length) return;
     let batch = [];
+    let firstLineRead = {};
     logs.forEach(log => {
       const fileName = path.parse(log.path).name;
       const jsonLog = log.dataStream
         .pipe(ndjson.parse())
         .on("data", line => {
+          if (!firstLineRead[fileName]) {
+            firstLineRead[fileName] = true;
+            event.sender.send("env-parsed", { fileName, line });
+            return;
+          }
           batch.push(line);
           if (batch.length >= 1000) {
             event.sender.send("file-line-parsed", { fileName, batch });

@@ -7,22 +7,29 @@ export default class FileUploader extends React.Component {
   constructor(props) {
     super(props);
     this.handleFileLoad = this.handleFileLoad.bind(this);
-    this.fileLoaded = this.fileLoaded.bind(this);
+    this.addLines = this.addLines.bind(this);
+    this.addEnv = this.addEnv.bind(this);
   }
 
   componentDidMount() {
-    ipcRenderer.addListener("file-line-parsed", this.fileLoaded);
+    ipcRenderer.addListener("file-line-parsed", this.addLines);
+    ipcRenderer.addListener("env-parsed", this.addEnv);
   }
 
   componentWillUnmount() {
-    ipcRenderer.removeListener("file-line-parsed", this.fileLoaded);
+    ipcRenderer.removeListener("file-line-parsed", this.addLines);
+    ipcRenderer.addListener("env-parsed", this.addEnv);
   }
 
   handleFileLoad(e) {
     ipcRenderer.send("load-file");
   }
 
-  fileLoaded(event, { fileName, batch: lines }) {
+  addEnv(event, { fileName, line: env }) {
+    this.props.addEnv(fileName, env);
+  }
+
+  addLines(event, { fileName, batch: lines }) {
     this.props.addLogLines(fileName, lines);
   }
 

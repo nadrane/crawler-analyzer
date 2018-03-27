@@ -50,7 +50,7 @@ export default class SeriesComposer extends React.Component {
 
     let events = new Set();
     for (const file of fileMetaData.values()) {
-      events = events.union(file.get(codeModule));
+      events = events.union(file.get("events").get(codeModule));
     }
     return events.keySeq();
   }

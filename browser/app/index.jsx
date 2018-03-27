@@ -19,37 +19,45 @@ export default class App extends React.Component {
       seriesConstraints: {},
       fileMetaData: Map()
     };
+
     this.toggleLog = this.toggleLog.bind(this);
-    this.toggleSeries = this.toggleSeries.bind(this);
     this.addLogLines = this.addLogLines.bind(this);
+    this.addEnv = this.addEnv.bind(this);
+
     this.addSeries = this.addSeries.bind(this);
+    this.toggleSeries = this.toggleSeries.bind(this);
+
     this.saveTimeInterval = this.saveTimeInterval.bind(this);
   }
 
-  addLogLines(fileName, lines) {
+  addEnv(fileName, env) {
     // Assign the fileName an id
-    if (!fileNameIdMap[fileName]) {
-      logId++;
-      fileNameIdMap[fileName] = logId;
-    }
+    fileNameIdMap[fileName] = ++logId;
+
+    this.setState(oldState => ({
+      fileMetaData: oldState.fileMetaData.setIn([logId, "env"], env)
+    }));
+  }
+
+  addLogLines(fileName, lines) {
     let id = fileNameIdMap[fileName];
 
     // Store which events exist for each codeModule on a per file basis
     lines.forEach(line => {
       const { codeModule, event: newEvent } = line;
       if (!codeModule || !newEvent) return;
-      const modulesForEvent = this.state.fileMetaData.getIn([id, codeModule]);
+      const modulesForEvent = this.state.fileMetaData.getIn([id, "events", codeModule]);
 
       if (!modulesForEvent) {
         this.setState(oldState => {
           return {
-            fileMetaData: oldState.fileMetaData.setIn([id, codeModule], Set([newEvent]))
+            fileMetaData: oldState.fileMetaData.setIn([id, "events", codeModule], Set([newEvent]))
           };
         });
       } else if (!modulesForEvent.includes(newEvent)) {
         this.setState(oldState => {
           return {
-            fileMetaData: oldState.fileMetaData.updateIn([id, codeModule], eventSet => {
+            fileMetaData: oldState.fileMetaData.updateIn([id, "events", codeModule], eventSet => {
               return eventSet.add(newEvent);
             })
           };
@@ -150,6 +158,7 @@ export default class App extends React.Component {
         <div className="row">
           <Logs
             addLogLines={this.addLogLines}
+            addEnv={this.addEnv}
             selectLog={this.selectLog}
             logs={this.state.logs}
             toggleLog={this.toggleLog}

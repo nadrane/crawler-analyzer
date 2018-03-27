@@ -1,9 +1,10 @@
 import React from "react";
+import { Map } from "immutable";
 
 export default class SelectCodeModule extends React.PureComponent {
   render() {
     const { codeModule, handleChange, fileMetaData } = this.props;
-    const codeModuleOptions = fileMetaData.flatMap(oneFile => oneFile).keySeq();
+    const codeModuleOptions = fileMetaData.flatMap(oneFile => oneFile.get("events", Map())).keySeq();
 
     return (
       <select className="custom-select" value={codeModule} onChange={e => handleChange(e, "codeModule")}>
