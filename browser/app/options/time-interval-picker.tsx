@@ -1,17 +1,26 @@
-import React from "react";
+import * as React from "react";
 
-export default class TimeIntervalPicker extends React.Component {
-  constructor() {
-    super();
+interface Props {
+  timeInterval: number;
+  saveTimeInterval(interval: number): void;
+}
+
+interface State {
+  localTimeInteval: string;
+}
+
+export default class TimeIntervalPicker extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
     this.handleClick = this.handleClick.bind(this);
     this.saveTimeInterval = this.saveTimeInterval.bind(this);
     this.state = {
-      localTimeInteval: 0
+      localTimeInteval: "0"
     };
   }
 
-  handleClick(e) {
-    const localTimeInteval = e.target.value;
+  handleClick(e: React.FormEvent<HTMLInputElement>) {
+    const localTimeInteval = e.currentTarget.value;
     this.setState({
       localTimeInteval
     });
@@ -33,7 +42,7 @@ export default class TimeIntervalPicker extends React.Component {
           <input
             id="timeInterval"
             className="form-control"
-            value={localTimeInteval !== 0 ? localTimeInteval : timeInterval}
+            value={localTimeInteval}
             onChange={this.handleClick}
           />
         </div>

@@ -1,10 +1,11 @@
 "use strict";
 
-import React from "react";
-import ReactDOM from "react-dom";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 import Highcharts from "highcharts";
 import ReactHighcharts from "react-highcharts";
-import _ from "lodash";
+import * as _ from "lodash";
+
 import {
   timeToNearestInterval,
   groupByTime,

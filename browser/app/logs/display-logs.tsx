@@ -1,15 +1,20 @@
-import React from "react";
+import * as React from "react";
 
-export default function DisplayLogs({ logs, toggleLog }) {
+import { Logs } from "../interfaces";
+
+interface Props {
+  logs: Logs;
+  toggleLog(id: number): void;
+}
+
+export default function DisplayLogs({ logs, toggleLog }: Props) {
   return Object.keys(logs).length > 0 ? (
     <div>
       <table className="table">
         <thead>
           <tr>
             <th>Loaded Logs</th>
-            <th colSpan="2" align="right">
-              Active
-            </th>
+            <th colSpan={2}>Active</th>
           </tr>
         </thead>
         <tbody>
@@ -34,7 +39,5 @@ export default function DisplayLogs({ logs, toggleLog }) {
         </tbody>
       </table>
     </div>
-  ) : (
-    <p>No logs have been loaded</p>
-  );
+  ) : null;
 }

@@ -6,7 +6,7 @@ const devMode = true;
 const LiveReloadPlugin = require("webpack-livereload-plugin");
 
 const config = {
-  entry: "./browser/index.js",
+  entry: "./browser/index.tsx",
   output: {
     path: __dirname,
     filename: "./public/bundle.js"
@@ -15,11 +15,15 @@ const config = {
   devtool: "source-map",
   resolve: {
     modules: ["node_modules"],
-    extensions: [".", ".jsx", ".js"]
+    extensions: [".", ".jsx", ".js", ".tsx", ".ts"]
   },
   target: "electron",
   plugins: [new LiveReloadPlugin({ appendScriptTag: true })],
   module: {
+    rules: [
+      { test: /\.tsx?$/, loader: "awesome-typescript-loader" },
+      { enforce: "pre", test: /\.js$/, loader: "source-map-loader" }
+    ],
     loaders: [
       {
         test: /jsx?$/,
@@ -31,6 +35,10 @@ const config = {
       }
     ]
   }
+  // externals: {
+  //   react: "React",
+  //   "react-dom": "ReactDOM"
+  // }
 };
 
 module.exports = config;

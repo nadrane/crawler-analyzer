@@ -1,15 +1,23 @@
-import React from "react";
+import * as React from "react";
 
 import Card from "../card";
 import SeriesComposer from "./series-composer";
 import ActiveSeries from "./active-series";
+import { LogEvents, SeriesConstraint } from "../interfaces";
 
-export default function Series({ series, fileMetaData, addSeries, toggleSeries }) {
+interface Props {
+  series: { [key: number]: SeriesConstraint };
+  logEvents: LogEvents;
+  addSeries(series: SeriesConstraint): void;
+  toggleSeries(seriesId: number): void;
+}
+
+export default function Series({ series, logEvents, addSeries, toggleSeries }: Props) {
   return (
     <Card>
       <div className="row">
         <div className="col-sm">
-          <SeriesComposer addSeries={addSeries} fileMetaData={fileMetaData} />
+          <SeriesComposer addSeries={addSeries} logEvents={logEvents} />
         </div>
         {!!Object.keys(series).length && (
           <div className="col-sm">

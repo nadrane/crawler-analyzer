@@ -1,4 +1,4 @@
-import _ from "lodash";
+import * as _ from "lodash";
 
 export const timeToNearestInterval = (data, timeInterval) => {
   return data.map(line => {
@@ -8,9 +8,9 @@ export const timeToNearestInterval = (data, timeInterval) => {
   });
 };
 
-export const getMinTime = data => Math.min(...getXValues(data));
-export const getXValues = data =>
-  _.uniqBy(data.map(line => new Date(line.time)), date => date.getTime());
+// export const getMinTime = data => Math.min(...getXValues(data));
+// export const getXValues = data =>
+//   _.uniqBy(data.map(line => new Date(line.time)), date => date.getTime());
 
 export const applyConstraints = (data, constraints) =>
   data.filter(line => constraints.event === line.event && constraints.codeModule === line.codeModule);

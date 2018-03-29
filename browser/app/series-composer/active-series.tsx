@@ -1,15 +1,20 @@
-import React from "react";
+import * as React from "react";
 
-export default function ActiveSeries({ series, toggleSeries }) {
+import { SeriesConstraints } from "../interfaces";
+
+interface Props {
+  series: SeriesConstraints;
+  toggleSeries(id: number): void;
+}
+
+export default function ActiveSeries({ series, toggleSeries }: Props) {
   return (
     <table className="table">
       <thead>
         <tr>
           <th>Series</th>
           <th>Name</th>
-          <th colSpan="2" align="right">
-            Active
-          </th>
+          <th colSpan={2}>Active</th>
         </tr>
       </thead>
       <tbody>

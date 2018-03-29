@@ -1,10 +1,15 @@
-import React from "react";
+import * as React from "react";
 import { ipcRenderer } from "electron";
 
-// Send async message to main process
+import { LogLine, Env } from "../interfaces";
 
-export default class FileUploader extends React.Component {
-  constructor(props) {
+interface Props {
+  addLogLines(fileName: string, newLines: LogLine[]): void;
+  addEnv(fileName: string, env: Env): void;
+}
+
+export default class FileUploader extends React.Component<Props> {
+  constructor(props: Props) {
     super(props);
     this.handleFileLoad = this.handleFileLoad.bind(this);
     this.addLines = this.addLines.bind(this);
@@ -25,11 +30,11 @@ export default class FileUploader extends React.Component {
     ipcRenderer.send("load-file");
   }
 
-  addEnv(event, { fileName, line: env }) {
+  addEnv(event, { fileName, line: env }: { fileName: string; line: Env }) {
     this.props.addEnv(fileName, env);
   }
 
-  addLines(event, { fileName, batch: lines }) {
+  addLines(event, { fileName, batch: lines }: { fileName: string; batch: LogLine[] }) {
     this.props.addLogLines(fileName, lines);
   }
 
